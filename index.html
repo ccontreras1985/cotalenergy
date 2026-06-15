@@ -269,20 +269,20 @@ nav.scrolled{box-shadow:0 2px 24px rgba(26,58,92,.12)}
 .td-n{font-family:var(--fb);font-weight:900;font-size:1.5rem;color:var(--az);line-height:1}
 .td-n em{font-style:normal;color:var(--nrj)}
 .td-l{font-size:.75rem;color:var(--g40);margin-top:4px;line-height:1.4}
-/* Gráfico generación mensual */
+/* Gráfico ahorro acumulado */
 .gen-chart-card{background:#fff;border:1px solid var(--g20);border-radius:var(--rl);padding:24px;box-shadow:var(--sh);margin-top:0}
 .gen-chart-ttl{font-weight:700;font-size:.9rem;color:var(--g90);margin-bottom:4px}
-.gen-chart-sub{font-size:.76rem;color:var(--g40);margin-bottom:16px}
-.bar-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-bottom:20px;position:relative}
-.bar-chart::after{content:'';position:absolute;bottom:20px;left:0;right:0;height:1px;background:var(--g20)}
-.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
-.bar{border-radius:4px 4px 0 0;width:100%;transition:opacity .2s;position:relative;min-height:4px}
-.bar:hover{opacity:.8}
-.bar-lbl{font-size:.55rem;color:var(--g40);text-align:center;position:absolute;bottom:-18px;white-space:nowrap}
-.bar-val{font-size:.58rem;font-weight:700;color:var(--g60);text-align:center;margin-bottom:2px}
-.bar-legend{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
-.bar-leg-item{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--g40)}
-.bar-leg-dot{width:10px;height:10px;border-radius:2px}
+.gen-chart-sub{font-size:.76rem;color:var(--g40);margin-bottom:20px}
+.savings-chart{display:flex;align-items:flex-end;gap:8px;height:160px;padding:0 4px;border-bottom:1px solid var(--g20);margin-bottom:18px}
+.sav-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;position:relative}
+.sav-bar{width:100%;background:linear-gradient(180deg,var(--az-cl),var(--az));border-radius:4px 4px 0 0;transition:transform .2s;position:relative;min-height:6px}
+.sav-bar.last{background:linear-gradient(180deg,var(--nrj-cl),var(--nrj))}
+.sav-bar:hover{transform:translateY(-2px)}
+.sav-bar-val{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.62rem;font-weight:800;color:var(--g60);white-space:nowrap}
+.sav-bar-yr{font-size:.62rem;color:var(--g40);text-align:center;margin-top:4px}
+.savings-legend{display:flex;gap:16px;justify-content:space-around;border-top:1px solid var(--g20);padding-top:14px;flex-wrap:wrap}
+.savings-leg-item{font-size:.78rem;color:var(--g40);display:flex;flex-direction:column;align-items:center;gap:2px}
+.savings-leg-item strong{font-size:1.1rem;font-weight:800;font-family:var(--fb)}
 
 .timeline{display:flex;flex-direction:column;gap:0}
 .tl{display:flex;gap:16px;padding-bottom:20px;position:relative}
@@ -856,16 +856,17 @@ footer{background:#0F1F30;padding:52px 5vw 28px}
           <div class="td"><span class="td-ico">🛡️</span><div class="td-n"><em>100</em>%</div><div class="td-l">Disponibilidad O&M todos los meses 2025</div></div>
           <div class="td"><span class="td-ico">✅</span><div class="td-n"><em>0</em> hrs</div><div class="td-l">Horas imputables a falla propia 2025</div></div>
         </div>
-        <!-- Gráfico barras generación mensual -->
+        <!-- Proyección ahorro acumulado cliente tipo -->
         <div class="gen-chart-card">
-          <div class="gen-chart-ttl">📊 Generación mensual real 2025 (kWh)</div>
-          <div class="gen-chart-sub">Planta 300 kW Cotal Energy · Datos O&M certificados</div>
-          <div class="bar-chart" id="barChart">
+          <div class="gen-chart-ttl">💰 Ahorro acumulado — cliente tipo</div>
+          <div class="gen-chart-sub">Boleta CGE $5.000.000/mes · descuento 15% · reajuste 4% anual</div>
+          <div class="savings-chart" id="savingsChart">
             <!-- generado por JS -->
           </div>
-          <div class="bar-legend">
-            <div class="bar-leg-item"><div class="bar-leg-dot" style="background:var(--az)"></div>Generación real</div>
-            <div class="bar-leg-item"><div class="bar-leg-dot" style="background:var(--nrj);opacity:.5"></div>Estimado</div>
+          <div class="savings-legend">
+            <div class="savings-leg-item"><strong style="color:var(--vd)">$9M</strong> año 1</div>
+            <div class="savings-leg-item"><strong style="color:var(--vd)">$48M</strong> año 5</div>
+            <div class="savings-leg-item"><strong style="color:var(--nrj)">$108M</strong> año 10</div>
           </div>
         </div>
       </div>
@@ -1123,40 +1124,33 @@ new Chart(document.getElementById('chartTarifa'),{
   }
 });
 
-// ── GRÁFICO BARRAS GENERACIÓN MENSUAL ─────────────────────────────────────────
-const GEN_DATA=[
-  {m:'Ene',real:79604,est:75141},
-  {m:'Feb',real:67857,est:66100},
-  {m:'Mar',real:68211,est:68925},
-  {m:'Abr',real:54809,est:54830},
-  {m:'May',real:44906,est:41820},
-  {m:'Jun',real:43422,est:34258},
-  {m:'Jul',real:42541,est:41026},
-  {m:'Ago',real:44958,est:44668},
-  {m:'Sep',real:59382,est:54719},
-  {m:'Oct',real:71652,est:63288},
-  {m:'Nov',real:68428,est:70095},
-  {m:'Dic',real:71121,est:73599},
-];
-const maxVal=Math.max(...GEN_DATA.map(d=>Math.max(d.real,d.est)));
-const bc=document.getElementById('barChart');
-GEN_DATA.forEach(d=>{
-  const bw=document.createElement('div');
-  bw.className='bar-wrap';
-  const realH=Math.round((d.real/maxVal)*100);
-  const estH=Math.round((d.est/maxVal)*100);
-  const above=d.real>=d.est;
-  bw.innerHTML=
-    '<div style="font-size:.56rem;font-weight:700;color:'+(above?'#3A7D3E':'#E87D1E')+';margin-bottom:2px">'+
-      (above?'▲':'▼')+
-    '</div>'+
-    '<div style="display:flex;align-items:flex-end;gap:2px;height:100px">'+
-      '<div class="bar" style="background:#2260A0;height:'+realH+'%;flex:1" title="Real: '+d.real.toLocaleString('es-CL')+' kWh"></div>'+
-      '<div class="bar" style="background:#E87D1E;opacity:.45;height:'+estH+'%;flex:1" title="Est: '+d.est.toLocaleString('es-CL')+' kWh"></div>'+
-    '</div>'+
-    '<div class="bar-lbl">'+d.m+'</div>';
-  bc.appendChild(bw);
-});
+// ── GRÁFICO AHORRO ACUMULADO 10 AÑOS ─────────────────────────────────────────
+// Cliente tipo: boleta CGE $5.000.000/mes, descuento 15%, reajuste 4% anual
+(function(){
+  const BOLETA=5000000, DESC=0.15, REAJ=0.04, ANOS=10;
+  const ahorroAnual=BOLETA*DESC*12;
+  let acum=0; const data=[];
+  for(let y=1;y<=ANOS;y++){
+    acum+=ahorroAnual*Math.pow(1+REAJ,y-1);
+    data.push({yr:y,val:Math.round(acum)});
+  }
+  const maxV=data[data.length-1].val;
+  const cont=document.getElementById('savingsChart');
+  if(!cont)return;
+  data.forEach((d,i)=>{
+    const h=Math.round((d.val/maxV)*135);
+    const isLast=i===data.length-1;
+    const millones=(d.val/1000000).toFixed(0);
+    const w=document.createElement('div');
+    w.className='sav-bar-wrap';
+    w.innerHTML=
+      '<div class="sav-bar'+(isLast?' last':'')+'" style="height:'+h+'px" title="$'+d.val.toLocaleString('es-CL')+' acumulado al año '+d.yr+'">'+
+        '<div class="sav-bar-val">$'+millones+'M</div>'+
+      '</div>'+
+      '<div class="sav-bar-yr">A'+d.yr+'</div>';
+    cont.appendChild(w);
+  });
+})();
 
 // ── SIMULADOR v3 — descuento garantizado sobre boleta CGE ─────────────────────
 const DESCUENTO=0.15; // 15% sobre boleta CGE total
